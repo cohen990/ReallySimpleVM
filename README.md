@@ -40,3 +40,21 @@ Terminates the program - the operand tells the program where to start up again.
 |LDX - \$02|Assigns a value to our X register |LDX #16000 |Assigns the number 16,000 to the X register|
 |STA - \$03|Stores the value of the A register to a memory location|STA ,X| Stores the value of the A register to the memory location pointed to by the X register|
 |END - \$04|Terminates the B32 program |END START |Terminate the program and tell our assembler that execution of our program should start at the START label |
+
+# File Format of executables
+
+|Data| Length| Description|
+|---|---|---|
+|“B32”| 3 Bytes |Our magic header number|
+|&lt;Starting Address&gt; |2 Bytes |This is a 16-bit integer that tells our virtual machine where, in memory, to place our program.|
+|&lt;Execution Address&gt; |2 Bytes |This is a 16-bit integer that tells our virtual machine where to begin execution of our program.|
+|&lt;ByteCode&gt; |?? Bytes |This will be the start of our bytecode, which can be any length.|
+
+# Assembler
+
+Our assembler expects input in the format:
+
+```
+[Optional Label:]
+<white space><mnemonic><white space><operand>[Optional white space]<newline>
+```
