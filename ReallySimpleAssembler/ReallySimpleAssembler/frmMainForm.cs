@@ -96,7 +96,7 @@ namespace ReallySimpleAssembler
                 return;
             }
             EatWhiteSpaces();
-            ReadMneumonic(OutputFile, IsLabelScan);
+            ReadMnemonic(OutputFile, IsLabelScan);
         }
 
         // Added myself - be ready to delete if it's wrong.
@@ -125,21 +125,41 @@ namespace ReallySimpleAssembler
             return lblname.ToUpper();
         }
 
-        private void ReadMneumonic(BinaryWriter OutputFile, bool IsLabelScan)
+        private void ReadMnemonic(BinaryWriter OutputFile, bool IsLabelScan)
         {
-            string Mneumonic = "";
+            string Mnemonic = "";
             while (!(char.IsWhiteSpace(SourceProgram[CurrentNdx])))
             {
-                Mneumonic = Mneumonic + SourceProgram[CurrentNdx];
+                Mnemonic = Mnemonic + SourceProgram[CurrentNdx];
                 CurrentNdx++;
             }
-            if (Mneumonic.ToUpper() == "LDX")
+            if (Mnemonic.ToUpper() == "LDX")
                 InterpretLDX(OutputFile, IsLabelScan);
-            if (Mneumonic.ToUpper() == "LDA")
+            if (Mnemonic.ToUpper() == "LDA")
                 InterpretLDA(OutputFile, IsLabelScan);
-            if (Mneumonic.ToUpper() == "STA")
+            if (Mnemonic.ToUpper() == "STA")
                 InterpretSTA(OutputFile, IsLabelScan);
-            if (Mneumonic.ToUpper() == "END")
+            if (Mnemonic.ToUpper() == "CMPA")
+                InterpretCMPA(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "CMPB")
+                InterpretCMPB(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "CMPX")
+                InterpretCMPX(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "CMPY")
+                InterpretCMPY(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "CMPD")
+                InterpretCMPD(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "JMP")
+                InterpretJMP(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "JEQ")
+                InterpretJEQ(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "JNE")
+                InterpretJNE(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "JGT")
+                InterpretJGT(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "JLT")
+                InterpretJLT(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "END")
             {
                 IsEnd = true;
                 DoEnd(OutputFile, IsLabelScan);
@@ -216,6 +236,86 @@ namespace ReallySimpleAssembler
             }
         }
 
+        private void InterpretCMPA(BinaryWriter OutputFile, bool IsLabelScan)
+        {
+            EatWhiteSpaces();
+            if (SourceProgram[CurrentNdx] == '#')
+            {
+                CurrentNdx++;
+                byte val = ReadByteValue();
+                AsLength += 2;
+                if (!IsLabelScan)
+                {
+                    OutputFile.Write((byte)0x05);
+                    OutputFile.Write(val);
+                }
+            }
+        }
+
+        private void InterpretCMPB(BinaryWriter OutputFile, bool IsLabelScan)
+        {
+            EatWhiteSpaces();
+            if (SourceProgram[CurrentNdx] == '#')
+            {
+                CurrentNdx++;
+                byte val = ReadByteValue();
+                AsLength += 2;
+                if (!IsLabelScan)
+                {
+                    OutputFile.Write((byte)0x06);
+                    OutputFile.Write(val);
+                }
+            }
+        }
+
+        private void InterpretCMPX(BinaryWriter OutputFile, bool IsLabelScan)
+        {
+            EatWhiteSpaces();
+            if (SourceProgram[CurrentNdx] == '#')
+            {
+                CurrentNdx++;
+                ushort val = ReadWordValue();
+                AsLength += 3;
+                if (!IsLabelScan)
+                {
+                    OutputFile.Write((byte)0x07);
+                    OutputFile.Write(val);
+                }
+            }
+        }
+
+        private void InterpretCMPY(BinaryWriter OutputFile, bool IsLabelScan)
+        {
+            EatWhiteSpaces();
+            if (SourceProgram[CurrentNdx] == '#')
+            {
+                CurrentNdx++;
+                ushort val = ReadWordValue();
+                AsLength += 3;
+                if (!IsLabelScan)
+                {
+                    OutputFile.Write((byte)0x08);
+                    OutputFile.Write(val);
+                }
+            }
+        }
+
+        private void InterpretCMPD(BinaryWriter OutputFile, bool IsLabelScan)
+        {
+            EatWhiteSpaces();
+            if (SourceProgram[CurrentNdx] == '#')
+            {
+                CurrentNdx++;
+                ushort val = ReadWordValue();
+                AsLength += 3;
+                if (!IsLabelScan)
+                {
+                    OutputFile.Write((byte)0x09);
+                    OutputFile.Write(val);
+                }
+            }
+        }
+
         private void DoEnd(BinaryWriter OutputFile, bool IsLabelScan)
         {
             AsLength++;
@@ -263,6 +363,12 @@ namespace ReallySimpleAssembler
             {
                 CurrentNdx++;
                 isHex = true;
+            }
+
+            if ((isHex == false) && (char.IsLetter(SourceProgram[CurrentNdx])))
+            {
+                val = (ushort)LabelTable[GetLabelName()];
+                return val;
             }
 
             while (char.IsLetterOrDigit(SourceProgram[CurrentNdx]))
