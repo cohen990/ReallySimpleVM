@@ -52,6 +52,9 @@
     <Compile Include="frmMainForm.Designer.cs">
       <DependentUpon>frmMainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Interpreter.cs" />
+    <Compile Include="Parser.cs" />
+    <Compile Include="ParserGlobalState.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="frmMainForm.resx">
