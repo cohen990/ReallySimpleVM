@@ -25,11 +25,18 @@ namespace ReallySimpleVirtualMachine
             InitializeComponent();
             m_ScreenMemoryLocation = 0xA000;
             m_ScreenMemory = new byte[4000];
+            Reset();
+        }
+
+        public void Reset()
+        {
             for (int i = 0; i < 4000; i += 2)
             {
                 m_ScreenMemory[i] = 32;
                 m_ScreenMemory[i + 1] = 7;
             }
+
+            Refresh();
         }
 
         public void Poke(ushort Address, byte Value)

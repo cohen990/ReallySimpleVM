@@ -177,16 +177,16 @@ namespace ReallySimpleAssembler
                 InterpretCMPY(OutputFile, IsLabelScan);
             if (Mnemonic.ToUpper() == "CMPD")
                 InterpretCMPD(OutputFile, IsLabelScan);
-            //if (Mnemonic.ToUpper() == "JMP")
-            //    InterpretJMP(OutputFile, IsLabelScan);
-            //if (Mnemonic.ToUpper() == "JEQ")
-            //    InterpretJEQ(OutputFile, IsLabelScan);
-            //if (Mnemonic.ToUpper() == "JNE")
-            //    InterpretJNE(OutputFile, IsLabelScan);
-            //if (Mnemonic.ToUpper() == "JGT")
-            //    InterpretJGT(OutputFile, IsLabelScan);
-            //if (Mnemonic.ToUpper() == "JLT")
-            //    InterpretJLT(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "JMP")
+                InterpretJMP(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "JEQ")
+                InterpretJEQ(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "JNE")
+                InterpretJNE(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "JGT")
+                InterpretJGT(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "JLT")
+                InterpretJLT(OutputFile, IsLabelScan);
             if (Mnemonic.ToUpper() == "END")
             {
                 IsEnd = true;
