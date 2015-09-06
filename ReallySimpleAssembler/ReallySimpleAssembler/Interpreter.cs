@@ -6,7 +6,7 @@ namespace ReallySimpleAssembler
 {
     public static class Interpreter
     {
-        public static void InterpretLDA(BinaryWriter OutputFile, bool IsLabelScan)
+        private static void WriteMnemonicWithByte(BinaryWriter outputFile, bool isLabelScan, byte operatorByte)
         {
             EatWhiteSpaces();
             if (SourceProgram[CurrentNdx] == '#')
@@ -14,16 +14,14 @@ namespace ReallySimpleAssembler
                 CurrentNdx++;
                 byte val = ReadByteValue();
                 AsLength += 2;
-                if (!IsLabelScan)
+                if (!isLabelScan)
                 {
-                    OutputFile.Write((byte)0x01);
-                    OutputFile.Write(val);
+                    outputFile.Write(operatorByte);
+                    outputFile.Write(val);
                 }
             }
         }
-
-
-        public static void InterpretLDX(BinaryWriter OutputFile, bool IsLabelScan)
+        private static void WriteNmemonicWithWord(BinaryWriter outputFile, bool isLabelScan, byte operatorByte)
         {
             EatWhiteSpaces();
             if (SourceProgram[CurrentNdx] == '#')
@@ -31,12 +29,23 @@ namespace ReallySimpleAssembler
                 CurrentNdx++;
                 ushort val = ReadWordValue();
                 AsLength += 3;
-                if (!IsLabelScan)
+                if (!isLabelScan)
                 {
-                    OutputFile.Write((byte)0x02);
-                    OutputFile.Write(val);
+                    outputFile.Write(operatorByte);
+                    outputFile.Write(val);
                 }
             }
+        }
+
+        public static void InterpretLDA(BinaryWriter OutputFile, bool IsLabelScan)
+        {
+            WriteMnemonicWithByte(OutputFile, IsLabelScan, 0x01);
+        }
+
+
+        public static void InterpretLDX(BinaryWriter OutputFile, bool IsLabelScan)
+        {
+            WriteNmemonicWithWord(OutputFile, IsLabelScan, 0x02);
         }
 
         public static void InterpretSTA(BinaryWriter OutputFile, bool IsLabelScan)
@@ -70,82 +79,27 @@ namespace ReallySimpleAssembler
 
         public static void InterpretCMPA(BinaryWriter OutputFile, bool IsLabelScan)
         {
-            EatWhiteSpaces();
-            if (SourceProgram[CurrentNdx] == '#')
-            {
-                CurrentNdx++;
-                byte val = ReadByteValue();
-                AsLength += 2;
-                if (!IsLabelScan)
-                {
-                    OutputFile.Write((byte)0x05);
-                    OutputFile.Write(val);
-                }
-            }
+            WriteMnemonicWithByte(OutputFile, IsLabelScan, 0x05);
         }
 
         public static void InterpretCMPB(BinaryWriter OutputFile, bool IsLabelScan)
         {
-            EatWhiteSpaces();
-            if (SourceProgram[CurrentNdx] == '#')
-            {
-                CurrentNdx++;
-                byte val = ReadByteValue();
-                AsLength += 2;
-                if (!IsLabelScan)
-                {
-                    OutputFile.Write((byte)0x06);
-                    OutputFile.Write(val);
-                }
-            }
+            WriteMnemonicWithByte(OutputFile, IsLabelScan, 0x06);
         }
 
         public static void InterpretCMPX(BinaryWriter OutputFile, bool IsLabelScan)
         {
-            EatWhiteSpaces();
-            if (SourceProgram[CurrentNdx] == '#')
-            {
-                CurrentNdx++;
-                ushort val = ReadWordValue();
-                AsLength += 3;
-                if (!IsLabelScan)
-                {
-                    OutputFile.Write((byte)0x07);
-                    OutputFile.Write(val);
-                }
-            }
+            WriteNmemonicWithWord(OutputFile, IsLabelScan, 0x07);
         }
 
         public static void InterpretCMPY(BinaryWriter OutputFile, bool IsLabelScan)
         {
-            EatWhiteSpaces();
-            if (SourceProgram[CurrentNdx] == '#')
-            {
-                CurrentNdx++;
-                ushort val = ReadWordValue();
-                AsLength += 3;
-                if (!IsLabelScan)
-                {
-                    OutputFile.Write((byte)0x08);
-                    OutputFile.Write(val);
-                }
-            }
+            WriteNmemonicWithWord(OutputFile, IsLabelScan, 0x08);
         }
 
         public static void InterpretCMPD(BinaryWriter OutputFile, bool IsLabelScan)
         {
-            EatWhiteSpaces();
-            if (SourceProgram[CurrentNdx] == '#')
-            {
-                CurrentNdx++;
-                ushort val = ReadWordValue();
-                AsLength += 3;
-                if (!IsLabelScan)
-                {
-                    OutputFile.Write((byte)0x09);
-                    OutputFile.Write(val);
-                }
-            }
+            WriteNmemonicWithWord(OutputFile, IsLabelScan, 0x09);
         }
     }
 }
