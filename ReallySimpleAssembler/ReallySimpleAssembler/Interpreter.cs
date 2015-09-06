@@ -21,14 +21,16 @@ namespace ReallySimpleAssembler
                 }
             }
         }
-        private static void WriteNmemonicWithWord(BinaryWriter outputFile, bool isLabelScan, byte operatorByte)
+
+        private static void WriteMnemonicWithWord(BinaryWriter outputFile, bool isLabelScan, byte operatorByte, bool returnEarly = false)
         {
             EatWhiteSpaces();
             if (SourceProgram[CurrentNdx] == '#')
             {
                 CurrentNdx++;
-                ushort val = ReadWordValue();
                 AsLength += 3;
+                if (returnEarly && isLabelScan) return;
+                ushort val = ReadWordValue();
                 if (!isLabelScan)
                 {
                     outputFile.Write(operatorByte);
@@ -45,7 +47,7 @@ namespace ReallySimpleAssembler
 
         public static void InterpretLDX(BinaryWriter OutputFile, bool IsLabelScan)
         {
-            WriteNmemonicWithWord(OutputFile, IsLabelScan, 0x02);
+            WriteMnemonicWithWord(OutputFile, IsLabelScan, 0x02);
         }
 
         public static void InterpretSTA(BinaryWriter OutputFile, bool IsLabelScan)
@@ -89,17 +91,42 @@ namespace ReallySimpleAssembler
 
         public static void InterpretCMPX(BinaryWriter OutputFile, bool IsLabelScan)
         {
-            WriteNmemonicWithWord(OutputFile, IsLabelScan, 0x07);
+            WriteMnemonicWithWord(OutputFile, IsLabelScan, 0x07);
         }
 
         public static void InterpretCMPY(BinaryWriter OutputFile, bool IsLabelScan)
         {
-            WriteNmemonicWithWord(OutputFile, IsLabelScan, 0x08);
+            WriteMnemonicWithWord(OutputFile, IsLabelScan, 0x08);
         }
 
         public static void InterpretCMPD(BinaryWriter OutputFile, bool IsLabelScan)
         {
-            WriteNmemonicWithWord(OutputFile, IsLabelScan, 0x09);
+            WriteMnemonicWithWord(OutputFile, IsLabelScan, 0x09);
+        }
+
+        public static void InterpretJMP(BinaryWriter OutputFile, bool IsLabelScan)
+        {
+            WriteMnemonicWithWord(OutputFile, IsLabelScan, 0x0A, true);
+        }
+
+        public static void InterpretJEQ(BinaryWriter OutputFile, bool IsLabelScan)
+        {
+            WriteMnemonicWithWord(OutputFile, IsLabelScan, 0x0B, true);
+        }
+
+        public static void InterpretJNE(BinaryWriter OutputFile, bool IsLabelScan)
+        {
+            WriteMnemonicWithWord(OutputFile, IsLabelScan, 0x0C, true);
+        }
+
+        public static void InterpretJGT(BinaryWriter OutputFile, bool IsLabelScan)
+        {
+            WriteMnemonicWithWord(OutputFile, IsLabelScan, 0x0D, true);
+        }
+
+        public static void InterpretJLT(BinaryWriter OutputFile, bool IsLabelScan)
+        {
+            WriteMnemonicWithWord(OutputFile, IsLabelScan, 0x0E, true);
         }
     }
 }
