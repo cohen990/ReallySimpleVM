@@ -17,6 +17,7 @@ namespace ReallySimpleVirtualMachine
         private ushort Register_D;
         private byte CompareFlag;
         private ushort SpeedMS;
+        private byte ProcessorFlags;
         private Thread programThread;
         private ManualResetEvent PauseEvent;
 
@@ -36,6 +37,7 @@ namespace ReallySimpleVirtualMachine
             Register_X = 0;
             Register_Y = 0;
             UpdateRegisterStatus();
+            ProcessorFlags = 0;
             CompareFlag = 0;
             SpeedMS = 0;
             realTimeNoDelayToolStripMenuItem.Checked = true;
@@ -129,10 +131,28 @@ namespace ReallySimpleVirtualMachine
                     UpdateRegisterStatus();
                     continue;
                 }
+                if (Instruction == 0x22) // LDB #<value>
+                {
+                    Register_B = ReallySimpleMemory[(InstructionPointer + 1)];
+                    SetRegisterD();
+                    ProgLength -= 1;
+                    InstructionPointer += 2;
+                    UpdateRegisterStatus();
+                    continue;
+                }
                 if (Instruction == 0x02) // LDX #<value>
                 {
                     Register_X = (ushort)((ReallySimpleMemory[(InstructionPointer + 2)]) << 8);
                     Register_X += ReallySimpleMemory[(InstructionPointer + 1)];
+                    ProgLength -= 2;
+                    InstructionPointer += 3;
+                    UpdateRegisterStatus();
+                    continue;
+                }
+                if (Instruction == 0x23) // LDY #<value>
+                {
+                    Register_Y = (ushort)((ReallySimpleMemory[(InstructionPointer + 2)]) << 8);
+                    Register_Y += ReallySimpleMemory[(InstructionPointer + 1)];
                     ProgLength -= 2;
                     InstructionPointer += 3;
                     UpdateRegisterStatus();
@@ -308,6 +328,310 @@ namespace ReallySimpleVirtualMachine
                     {
                         InstructionPointer += 3;
                     }
+                    UpdateRegisterStatus();
+                    continue;
+                }
+                if (Instruction == 0x0F) // INCA
+                {
+                    if (Register_A == 0xFF)
+                    {
+                        ProcessorFlags = (byte)(ProcessorFlags | 1);
+                    }
+                    else
+                    {
+                        ProcessorFlags = (byte)(ProcessorFlags & 0xFE);
+                    }
+                    unchecked { Register_A++; }
+                    SetRegisterD();
+                    InstructionPointer++;
+                    UpdateRegisterStatus();
+                    continue;
+                }
+                if (Instruction == 0x10) // INCB
+                {
+                    if (Register_B == 0xFF)
+                    {
+                        ProcessorFlags = (byte)(ProcessorFlags | 1);
+                    }
+                    else
+                    {
+                        ProcessorFlags = (byte)(ProcessorFlags & 0xFE);
+                    }
+                    unchecked { Register_B++; }
+                    SetRegisterD();
+                    InstructionPointer++;
+                    UpdateRegisterStatus();
+                    continue;
+                }
+                if (Instruction == 0x11) // INCX
+                {
+                    if (Register_X == 0xFFFF)
+                    {
+                        ProcessorFlags = (byte)(ProcessorFlags | 1);
+                    }
+                    else
+                    {
+                        ProcessorFlags = (byte)(ProcessorFlags & 0xFE);
+                    }
+                    unchecked { Register_X++; }
+                    InstructionPointer++;
+                    UpdateRegisterStatus();
+                    continue;
+                }
+                if (Instruction == 0x12) // INCY
+                {
+                    if (Register_Y == 0xFFFF)
+                    {
+                        ProcessorFlags = (byte)(ProcessorFlags | 1);
+                    }
+                    else
+                    {
+                        ProcessorFlags = (byte)(ProcessorFlags & 0xFE);
+                    }
+                    unchecked { Register_Y++; }
+                    InstructionPointer++;
+                    UpdateRegisterStatus();
+                    continue;
+                }
+                if (Instruction == 0x13) // INCD 
+                {
+                    if (Register_D == 0xFFFF)
+                    {
+                        ProcessorFlags = (byte)(ProcessorFlags | 1);
+                    }
+                    else
+                    {
+                        ProcessorFlags = (byte)(ProcessorFlags & 0xFE);
+                    }
+                    unchecked
+                    {
+                        Register_D++;
+                        Register_A = (byte)(Register_D >> 8);
+                        Register_B = (byte)(Register_D & 255);
+                    }
+                    InstructionPointer++;
+                    UpdateRegisterStatus();
+                    continue;
+                }
+                if (Instruction == 0x14) // DECA
+                {
+                    ProcessorFlags = (byte)(ProcessorFlags & 0xFE);
+                    unchecked { Register_A--; }
+                    SetRegisterD();
+                    InstructionPointer++;
+                    UpdateRegisterStatus();
+                    continue;
+                }
+                if (Instruction == 0x15) // DECB
+                {
+                    ProcessorFlags = (byte)(ProcessorFlags & 0xFE);
+                    unchecked { Register_B--; }
+                    SetRegisterD();
+                    InstructionPointer++;
+                    UpdateRegisterStatus();
+                    continue;
+                }
+                if (Instruction == 0x16) // DECX
+                {
+                    ProcessorFlags = (byte)(ProcessorFlags & 0xFE);
+                    unchecked { Register_X--; }
+                    InstructionPointer++;
+                    UpdateRegisterStatus();
+                    continue;
+                }
+                if (Instruction == 0x17) // DECY
+                {
+                    ProcessorFlags = (byte)(ProcessorFlags & 0xFE);
+                    unchecked { Register_Y--; }
+                    InstructionPointer++;
+                    UpdateRegisterStatus();
+                    continue;
+                }
+                if (Instruction == 0x18) // DECD
+                {
+                    ProcessorFlags = (byte)(ProcessorFlags & 0xFD);
+                    unchecked
+                    {
+                        Register_D--;
+                        Register_A = (byte)(Register_D >> 8);
+                        Register_B = (byte)(Register_D & 255);
+                    }
+                    InstructionPointer++;
+                    UpdateRegisterStatus();
+                    continue;
+                }
+                if (Instruction == 0x19) // ROLA
+                {
+                    byte OldCarryFlag = (byte)(ProcessorFlags & 2);
+                    if ((Register_A & 128) == 128)
+                    {
+                        ProcessorFlags = (byte)(ProcessorFlags | 2);
+                    }
+                    else
+                    {
+                        ProcessorFlags = (byte)(ProcessorFlags & 0xFD);
+                    }
+                    Register_A = (byte)(Register_A << 1);
+                    if (OldCarryFlag > 0)
+                    {
+                        Register_A = (byte)(Register_A | 1);
+                    }
+                    SetRegisterD();
+                    InstructionPointer++;
+                    UpdateRegisterStatus();
+                    continue;
+                }
+                if (Instruction == 0x1A) // ROLB
+                {
+                    byte OldCarryFlag = (byte)(ProcessorFlags & 2); if ((Register_B & 128) == 128)
+                    {
+                        ProcessorFlags = (byte)(ProcessorFlags | 2);
+                    }
+                    else
+                    {
+                        ProcessorFlags = (byte)(ProcessorFlags & 0xFD);
+                    }
+                    Register_B = (byte)(Register_B << 1);
+                    if (OldCarryFlag > 0)
+                    {
+                        Register_B = (byte)(Register_B | 1);
+                    }
+                    SetRegisterD();
+                    InstructionPointer++;
+                    UpdateRegisterStatus();
+                    continue;
+                }
+                if (Instruction == 0x1B) // RORA
+                {
+                    byte OldCarryFlag = (byte)(ProcessorFlags & 2);
+                    if ((Register_A & 1) == 1)
+                    {
+                        ProcessorFlags = (byte)(ProcessorFlags | 2);
+                    }
+                    else
+                    {
+                        ProcessorFlags = (byte)(ProcessorFlags & 0xFD);
+                    }
+                    Register_A = (byte)(Register_A >> 1);
+                    if (OldCarryFlag > 0)
+                    {
+                        Register_A = (byte)(Register_A | 128);
+                    }
+                    SetRegisterD();
+                    InstructionPointer++;
+                    UpdateRegisterStatus();
+                    continue;
+                }
+                if (Instruction == 0x1C) // RORB
+                {
+                    byte OldCarryFlag = (byte)(ProcessorFlags & 2);
+                    if ((Register_B & 1) == 1)
+                    {
+                        ProcessorFlags = (byte)(ProcessorFlags | 2);
+                    }
+                    else
+                    {
+                        ProcessorFlags = (byte)(ProcessorFlags & 0xFD);
+                    }
+                    Register_B = (byte)(Register_B >> 1);
+                    if (OldCarryFlag > 0)
+                    {
+                        Register_B = (byte)(Register_B | 128);
+                    }
+                    SetRegisterD();
+                    InstructionPointer++;
+                    UpdateRegisterStatus();
+                    continue;
+                }
+                if (Instruction == 0x1D) // ADCA
+                {
+                    if ((byte)(ProcessorFlags & 2) == 2)
+                    {
+                        if (Register_A == 0xFF)
+                        {
+                            ProcessorFlags = (byte)(ProcessorFlags | 1);
+                        }
+                        else
+                        {
+                            ProcessorFlags = (byte)(ProcessorFlags & 0xFE);
+                        }
+                        unchecked { Register_A++; }
+                        SetRegisterD();
+                    }
+                    InstructionPointer++;
+                    UpdateRegisterStatus();
+                    continue;
+                }
+                if (Instruction == 0x1E) // ADCB
+                {
+                    if ((byte)(ProcessorFlags & 2) == 2)
+                    {
+                        if (Register_B == 0xFF)
+                        {
+                            ProcessorFlags = (byte)(ProcessorFlags | 1);
+                        }
+                        else
+                        {
+                            ProcessorFlags = (byte)(ProcessorFlags & 0xFE);
+                        }
+                        unchecked { Register_B++; }
+                        SetRegisterD();
+                    }
+                    InstructionPointer++;
+                    UpdateRegisterStatus();
+                    continue;
+                }
+                if (Instruction == 0x1F) // ADDA
+                {
+                    byte val = ReallySimpleMemory[(InstructionPointer + 1)];
+                    if (Register_A == 0xFF && val > 0)
+                    {
+                        ProcessorFlags = (byte)(ProcessorFlags | 1);
+                    }
+                    else
+                    {
+                        ProcessorFlags = (byte)(ProcessorFlags & 0xFE);
+                    }
+                    unchecked { Register_A += val; }
+                    SetRegisterD();
+                    InstructionPointer += 2;
+                    UpdateRegisterStatus();
+                    continue;
+                }
+                if (Instruction == 0x20) // ADDB
+                {
+                    byte val = ReallySimpleMemory[(InstructionPointer + 1)];
+                    if (Register_B == 0xFF && val > 0)
+                    {
+                        ProcessorFlags = (byte)(ProcessorFlags | 1);
+                    }
+                    else
+                    {
+                        ProcessorFlags = (byte)(ProcessorFlags & 0xFE);
+                    }
+                    unchecked { Register_B += val; }
+                    SetRegisterD();
+                    InstructionPointer += 2;
+                    UpdateRegisterStatus();
+                    continue;
+                }
+                if (Instruction == 0x21) // ADDAB
+                {
+                    if ((255 - Register_A) > (Register_B))
+                    {
+                        ProcessorFlags = (byte)(ProcessorFlags | 1);
+                    }
+                    else
+                    {
+                        ProcessorFlags = (byte)(ProcessorFlags & 0xFE);
+                    }
+                    unchecked
+                    {
+                        Register_D = (ushort)(Register_B + Register_A);
+                    }
+                    Register_A = (byte)(Register_D >> 8);
+                    Register_B = (byte)(Register_D & 255);
+                    InstructionPointer++;
                     UpdateRegisterStatus();
                     continue;
                 }
