@@ -377,7 +377,9 @@ namespace ReallySimpleVirtualMachine
             mS4SecondsToolStripMenuItem.Checked = false; // 4 seconds
             mS5SecondsToolStripMenuItem.Checked = false; // 5 seconds
             realTimeNoDelayToolStripMenuItem.Checked = false; // real time
-        }        private void ThreadPoke(ushort Addr, byte value)
+        }
+
+        private void ThreadPoke(ushort Addr, byte value)
         {
             if (reallySimpleScreen1.InvokeRequired)
             {
