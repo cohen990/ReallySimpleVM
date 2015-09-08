@@ -733,14 +733,14 @@ namespace ReallySimpleVirtualMachine
         {
             resumeToolStripMenuItem.Enabled = true;
             pauseToolStripMenuItem.Enabled = false;
-            PauseEvent.Reset();
+            PauseEvent?.Reset();
         }
 
         private void resumeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             resumeToolStripMenuItem.Enabled = false;
             pauseToolStripMenuItem.Enabled = true;
-            PauseEvent.Set();
+            PauseEvent?.Set();
         }
 
         private void restartToolStripMenuItem_Click(object sender, EventArgs e)
