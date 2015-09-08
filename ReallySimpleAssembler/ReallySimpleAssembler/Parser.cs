@@ -187,6 +187,48 @@ namespace ReallySimpleAssembler
                 InterpretJGT(OutputFile, IsLabelScan);
             if (Mnemonic.ToUpper() == "JLT")
                 InterpretJLT(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "INCA")
+                InterpretINCA(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "INCB")
+                InterpretINCB(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "INCX")
+                InterpretINCX(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "INCY")
+                InterpretINCY(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "INCD")
+                InterpretINCD(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "DECA")
+                InterpretDECA(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "DECB")
+                InterpretDECB(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "DECX")
+                InterpretDECX(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "DECY")
+                InterpretDECY(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "DECD")
+                InterpretDECD(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "ROLA")
+                InterpretROLA(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "ROLB")
+                InterpretROLB(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "RORA")
+                InterpretRORA(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "RORB")
+                InterpretRORB(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "ADCA")
+                InterpretADCA(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "ADCB")
+                InterpretADCB(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "ADDA")
+                InterpretADDA(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "ADDB")
+                InterpretADDB(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "ADDAB")
+                InterpretADDAB(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "LDY")
+                InterpretLDY(OutputFile, IsLabelScan);
+            if (Mnemonic.ToUpper() == "LDB")
+                InterpretLDB(OutputFile, IsLabelScan);
             if (Mnemonic.ToUpper() == "END")
             {
                 IsEnd = true;
